@@ -1,2 +1,2 @@
 # AccelaSupportTools
-Tools for Accela Support and its customers
+Tools for Accela Support
