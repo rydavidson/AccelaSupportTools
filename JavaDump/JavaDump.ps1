@@ -44,10 +44,10 @@ function prereqCheck {
     if ($failed) {
         log "Failed prereq check for the following reasons:"
         log $failureLog
-    }
-    
-    Pause
-    exit
+        Pause
+        exit
+    }   
+
 }
 
 
@@ -76,6 +76,11 @@ else {
 
 log "JAVA_HOME: $jdk"
 
+if (!$jdk.Contains("bin")){
+    $jdk += "\bin"
+}
+
+
 foreach ($proc in $procs) {
     $cmd = $proc.CommandLine
     # Get the AA processes - they should have "av." in the command line
@@ -91,9 +96,12 @@ foreach ($proc in $procs) {
             Remove-Item -path "AccelaDump\$id.hprof"
         }
         # Thread Dump command
-        $jstack = $jdk + "\jstack -l $id >> AccelaDump\$id.tdump"
-        # Heap Dump command
-        $jmap = $jdk + "\jmap -dump:file=AccelaDump\$id.hprof $id"
+        $jstack = "&`"$jdk\jstack.exe`" -l $id >> AccelaDump\$id.tdump"
+
+        # Heap Dump command     
+        $jmap = "&`"$jdk\jmap.exe`" -dump:file=AccelaDump\$id.hprof $id"
+        
+        # Run the commands
         Invoke-Expression $jstack
         Invoke-Expression $jmap
 
